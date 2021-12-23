@@ -1,0 +1,52 @@
+\documentclass[11pt, handout]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{datetime}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bbm}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{environ}
+\usepackage{mathtools}
+
+\usetheme{CambridgeUS}
+\usecolortheme{default}
+
+\setbeamertemplate{theorems}[numbered]
+
+\newcommand\Fontvi{\fontsize{10}{12}\selectfont}
+\newcommand\Fontvii{\fontsize{9}{10}\selectfont}
+
+\DeclareMathOperator*{\argmin}{argmin}
+
+\newdate{date}{18}{01}{2021}
+
+\title[Lijoi et al. (2007)]{Bayesian nonparametric estimation of the probability of discovering new species}
+\subtitle{Lijoi, Mena \& Pr{\"u}nster (2007)}
+\author{Stefano Cortinovis}
+\date[20605 - Machine Learning II]{\displaydate{date}}
+
+% \AtBeginSection[]
+% {
+%     \begin{frame}
+%         \frametitle{Table of Contents}
+%         \tableofcontents[currentsection]
+%     \end{frame}
+% }
+
+\begin{document}
+
+\nocite{*}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}[allowframebreaks] %allow to expand references to multiple frames (slides)
+\frametitle{References}
+\scriptsize{\bibliographystyle{acm}}
+\bibliography{lijoi07}
+\end{frame}
+ 
+\end{document}
