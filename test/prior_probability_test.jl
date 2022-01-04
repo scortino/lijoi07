@@ -14,7 +14,7 @@ x = 1:n
 θ_dp = 19.233
 p = DirichletProcess(θ_dp)
 probs_dp = [prior_probability(p, big(n), k) for k in x] # big necessary to compute factorial(49)
-plot!(
+plot(
     x,
     probs_dp,
     markershape = :xcross,
@@ -68,7 +68,7 @@ plot!(
     dpi = 300,
     size = (900, 600),
     left_margin = 7.5mm,
-    title = "Prior probabilities for \$K_{50}\$",
+    title = "Prior probability distributions for \$K_{50}\$",
     xlabel = "\$k\$",
     ylabel = "pr\$(K_{50} = k)\$",
     xlims = (0, 51),
