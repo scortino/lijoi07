@@ -3,7 +3,7 @@ using Memoize
 using SpecialFunctions
 
 # Rising factorial
-function rising_factorial(a::AbstractFloat, n::Integer)
+function rising_factorial(a::Real, n::Integer)
     p = a
     for j = 1:(n-1)
         p *= (a + j)
@@ -44,7 +44,7 @@ end
 # Integer stirling number of the first kind
 # https://en.wikipedia.org/wiki/Stirling_numbers_of_the_first_kind
 # n>=0, k>=0
-@memoize LRU{Tuple{Any, Any}, Any}(maxsize=128) function stirling(n::Integer, k::Integer)
+@memoize LRU{Tuple{Any,Any},Any}(maxsize = 128) function stirling(n::Integer, k::Integer)
     if n == k == 0
         return 1
     elseif (n == 0) || (k == 0)
@@ -52,7 +52,7 @@ end
     elseif n == k
         return 1
     elseif k == 1
-        return factorial(n-1)
+        return factorial(n - 1)
     elseif k == n - 1
         return binomial(n, 2)
     elseif k == n - 2
