@@ -1,7 +1,11 @@
 # Github workflow to compile latex project and deploy PDF on orphan branch `pdf`
 
 name: compile_latex
-on: [push]
+on:
+  push:
+    branches:
+      - main
+    tags: '*'
 jobs:
   compile:
     runs-on: ubuntu-latest
