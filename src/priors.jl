@@ -11,6 +11,15 @@ function prior_probability(prior::DirichletProcess, n::Integer, k::Integer)
     return prior.θ^k * stirling(n, k) / rising_factorial(prior.θ, n)
 end
 
+# Notice it doesn't depend on j
+function posterior_probability(prior::DirichletProcess, m::Integer, k::Integer, n::Integer)
+    s = 0
+    for l = k:m
+        s += binomial(m, l) * stirling(l, k) * rising_factorial(n, m - l)
+    end
+    return s * prior.θ^k * rising_factorial(prior.θ, n) / rising_factorial(prior.θ, n + m)
+end
+
 struct PoissonDirichletProcess
     σ::AbstractFloat
     θ::AbstractFloat
