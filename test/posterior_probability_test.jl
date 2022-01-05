@@ -19,9 +19,10 @@ plot_1 = plot(
     left_margin = 7.5mm,
     xlabel = "\$k\$",
     ylabel = "pr\$(K_{50}^{(50)} = k | K_{50} = 5)\$",
-    xlims = (0, 51),
-    ylims = (0, 0.180),
+    xlims = (-1, 51),
+    ylims = (0, 0.175),
     xticks = 0:5:50,
+    yticks = 0.025:0.025:0.175,
     guidefontsize = 9,
 )
 plot_2 = deepcopy(plot_1)
@@ -72,9 +73,29 @@ for (i, j) in enumerate(js)
         probs_pd_2,
         markershape = :circle,
         markersize = 2,
+        linestyle = :dash,
         label = "PD \$(\\sigma = 0.75, \\theta = 0.698)\$",
     )
     @test sum(probs_pd_2) ≈ 1 atol = 1e-4 # j = 45 most imprecise
+end
+
+# Example 3: normalized-inverse Gaussian process
+x = 1:m # Posterior prob for N-IG defined only when k >= 1
+θ_nig = 11.074
+p = NormalizedIGProcess(big(θ_nig)) # big necessary to avoid approximation error
+
+for (i, j) in enumerate(js)
+    local probs_nig = [posterior_probability(p, big(m), k, big(n), j) for k in x] # big necessary to compute binomial(99, 18)
+    plot!(
+        plots[i],
+        x,
+        probs_nig,
+        markershape = :utriangle,
+        markersize = 2,
+        linestyle = :dash,
+        label = "N-IG \$(\\theta = 11.074)\$",
+    )
+    @test sum(probs_nig) ≈ 1 atol = 1e-4 # j = 5 most imprecise
 end
 
 # Merging subplots
