@@ -4,11 +4,7 @@ using SpecialFunctions
 
 # Rising factorial
 function rising_factorial(a::Real, n::Integer)
-    p = a
-    for j = 1:(n-1)
-        p *= (a + j)
-    end
-    p
+    prod(a + j for j = 0:(n-1); init = 1)
 end
 
 # Central generalized factorial coefficient
@@ -17,11 +13,10 @@ function generalized_factorial(n::Integer, k::Integer, σ::AbstractFloat)
         return 1
     end
 
-    s = 0
-    for j = 0:k
-        s += (-1)^j * rising_factorial(-j * σ, n) / (factorial(j) * factorial(k - j))
-    end
-    s
+    sum(
+        (-1)^j * rising_factorial(-j * σ, n) / (factorial(j) * factorial(k - j)) for j = 0:k;
+        init = 0,
+    )
 end
 
 # Non-central generalized factorial coefficient
@@ -31,11 +26,11 @@ function noncentral_generalized_factorial(
     σ::AbstractFloat,
     γ::AbstractFloat,
 )
-    s = 0
-    for j = k:n
-        s += binomial(n, j) * generalized_factorial(j, k, σ) * rising_factorial(-γ, n - j)
-    end
-    s
+    sum(
+        binomial(n, j) * generalized_factorial(j, k, σ) * rising_factorial(-γ, n - j) for
+        j = k:n;
+        init = 0,
+    )
 end
 
 # Unsigned stirling number of the first kind

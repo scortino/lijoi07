@@ -13,11 +13,11 @@ end
 
 # Notice it doesn't depend on j
 function posterior_probability(prior::DirichletProcess, m::Integer, k::Integer, n::Integer)
-    s = 0
-    for l = k:m
-        s += binomial(m, l) * stirling(l, k) * rising_factorial(n, m - l)
-    end
-    s * prior.θ^k * rising_factorial(prior.θ, n) / rising_factorial(prior.θ, n + m)
+    s = sum(
+        binomial(m, l) * stirling(l, k) * rising_factorial(n, m - l) for l = k:m;
+        init = 0,
+    )
+    prior.θ^k * rising_factorial(prior.θ, n) / rising_factorial(prior.θ, n + m) * s
 end
 
 struct PoissonDirichletProcess
@@ -26,12 +26,9 @@ struct PoissonDirichletProcess
 end
 
 function prior_probability(prior::PoissonDirichletProcess, n::Integer, k::Integer)
-    p = 1
-    for i = 1:(k-1)
-        p *= (prior.θ + i * prior.σ)
-    end
-    p * generalized_factorial(n, k, prior.σ) / (prior.σ^k) /
-    rising_factorial(prior.θ + 1, n - 1)
+    p = prod(prior.θ + i * prior.σ for i = 1:(k-1); init = 1)
+    p / (prior.σ^k * rising_factorial(prior.θ + 1, n - 1)) *
+    generalized_factorial(n, k, prior.σ)
 end
 
 function posterior_probability(
@@ -41,13 +38,9 @@ function posterior_probability(
     n::Integer,
     j::Integer,
 )
-    s = 1
-    for i = j:(j+k-1)
-        s *= (prior.θ + i * prior.σ)
-    end
-    s / prior.σ^k *
-    noncentral_generalized_factorial(m, k, prior.σ, -n + j * prior.σ) *
-    rising_factorial(prior.θ + 1, n - 1) / rising_factorial(prior.θ + 1, n + m - 1)
+    p = prod(prior.θ + i * prior.σ for i = j:(j+k-1); init = 1)
+    rising_factorial(prior.θ + 1, n - 1) / rising_factorial(prior.θ + 1, n + m - 1) * p /
+    prior.σ^k * noncentral_generalized_factorial(m, k, prior.σ, -n + j * prior.σ)
 end
 
 # /sigma = 1/2
@@ -57,10 +50,11 @@ end
 
 # When gamma takes two parameters, it evaluates to incomplete gamma function
 function prior_probability(prior::NormalizedIGProcess, n::Integer, k::Integer)
-    s = 0
-    for i = 0:(n-1)
-        s += binomial(n - 1, i) * (-prior.θ^2)^(-i) * gamma(k + 2 + 2i - 2n, prior.θ)
-    end
-    s * binomial(2n - k - 1, n - 1) * exp(prior.θ) * (-prior.θ^2)^(n - 1) /
-    (2^(2n - k - 1) * gamma(k))
+    s = sum(
+        binomial(n - 1, i) * (-prior.θ^2)^(-i) * gamma(k + 2 + 2i - 2n, prior.θ) for
+        i = 0:(n-1);
+        init = 0,
+    )
+    binomial(2n - k - 1, n - 1) * (exp(prior.θ) * (-prior.θ^2)^(n - 1)) /
+    (2^(2n - k - 1) * gamma(k)) * s
 end
