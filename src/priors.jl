@@ -34,6 +34,22 @@ function prior_probability(prior::PoissonDirichletProcess, n::Integer, k::Intege
            rising_factorial(prior.θ + 1, n - 1)
 end
 
+function posterior_probability(
+    prior::PoissonDirichletProcess,
+    m::Integer,
+    k::Integer,
+    n::Integer,
+    j::Integer,
+)
+    s = 1
+    for i = j:(j+k-1)
+        s *= (prior.θ + i * prior.σ)
+    end
+    return s / prior.σ^k *
+           noncentral_generalized_factorial(m, k, prior.σ, -n + j * prior.σ) *
+           rising_factorial(prior.θ + 1, n - 1) / rising_factorial(prior.θ + 1, n + m - 1)
+end
+
 # /sigma = 1/2
 struct NormalizedIGProcess
     θ::AbstractFloat

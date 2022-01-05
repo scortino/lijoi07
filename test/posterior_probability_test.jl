@@ -10,7 +10,7 @@ using Test
 n = 50
 m = 50
 js = [5, 25, 45]
-x = 1:m
+x = 0:m # there can be 0 new species observed since we have already observed some
 
 # Plots customization
 plot_1 = plot(
@@ -22,17 +22,19 @@ plot_1 = plot(
     xlims = (0, 51),
     ylims = (0, 0.180),
     xticks = 0:5:50,
+    guidefontsize = 9,
 )
 plot_2 = deepcopy(plot_1)
 plot!(plot_2, ylabel = "pr\$(K_{50}^{(50)} = k | K_{50} = 25)\$")
 plot_3 = deepcopy(plot_1)
 plot!(plot_3, ylabel = "pr\$(K_{50}^{(50)} = k | K_{50} = 45)\$")
+plots = [plot_1, plot_2, plot_3]
 
 # Example 1: Dirichlet process
 θ_dp = 19.233
 p = DirichletProcess(θ_dp)
 probs_dp = [posterior_probability(p, big(m), k, n) for k in x] # big necessary to compute factorial(21)
-for plot_ in [plot_1, plot_2, plot_3]
+for plot_ in plots
     plot!(
         plot_,
         x,
@@ -42,10 +44,47 @@ for plot_ in [plot_1, plot_2, plot_3]
         label = "DP \$(\\theta = 19.233)\$",
     )
 end
-@test sum(probs_dp) ≈ 1 atol = 1e-5
+@test sum(probs_dp) ≈ 1 atol = 1e-8
 
-# Merge subplots
-plot(plot_1, plot_2, plot_3, layout = (3, 1))
+# Example 2: Two-parameter Poisson-Dirichlet process
+σ_pd_1, θ_pd_1 = (0.25, 12.216)
+p_1 = PoissonDirichletProcess(σ_pd_1, θ_pd_1)
+
+σ_pd_2, θ_pd_2 = (0.75, 0.698)
+p_2 = PoissonDirichletProcess(σ_pd_2, θ_pd_2)
+
+for (i, j) in enumerate(js)
+    local probs_pd_1 = [posterior_probability(p_1, big(m), big(k), n, j) for k in x] # big necessary to compute factorial(21)
+    plot!(
+        plots[i],
+        x,
+        probs_pd_1,
+        markershape = :circle,
+        markersize = 2,
+        label = "PD \$(\\sigma = 0.25, \\theta = 12.216)\$",
+    )
+    @test sum(probs_pd_1) ≈ 1 atol = 1e-8
+
+    local probs_pd_2 = [posterior_probability(p_2, big(m), big(k), n, j) for k in x] # big necessary to compute factorial(21)
+    plot!(
+        plots[i],
+        x,
+        probs_pd_2,
+        markershape = :circle,
+        markersize = 2,
+        label = "PD \$(\\sigma = 0.75, \\theta = 0.698)\$",
+    )
+    @test sum(probs_pd_2) ≈ 1 atol = 1e-4 # j = 45 most imprecise
+end
+
+# Merging subplots
+plot(
+    plot_1,
+    plot_2,
+    plot_3,
+    layout = (3, 1),
+    plot_title = "Posterior probability distributions for \$K_{50}^{(50)}\$",
+)
 
 # Saving final plot
 if !isfile("../img/posterior_probability.png")
