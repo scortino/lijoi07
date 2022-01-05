@@ -60,8 +60,8 @@ function prior_probability(prior::NormalizedIGProcess, n::Integer, k::Integer)
     s = 0
     for i = 0:(n-1)
         s +=
-            binomial(n - 1, i) * (-(prior.θ)^2)^(-i) * gamma(k + 2 + 2 * i - 2 * n, prior.θ)
+            binomial(n - 1, i) * (-prior.θ^2)^(-i) * gamma(k + 2 + 2i - 2n, prior.θ)
     end
-    return s * binomial(2 * n - k - 1, n - 1) * exp(prior.θ) * (-(prior.θ)^2)^(n - 1) /
-           (2^(2 * n - k - 1) * gamma(k))
+    return s * binomial(2n - k - 1, n - 1) * exp(prior.θ) * (-prior.θ^2)^(n - 1) /
+           (2^(2n - k - 1) * gamma(k))
 end
