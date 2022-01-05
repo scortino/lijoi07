@@ -8,7 +8,7 @@ struct DirichletProcess
 end
 
 function prior_probability(prior::DirichletProcess, n::Integer, k::Integer)
-    return prior.θ^k * stirling(n, k) / rising_factorial(prior.θ, n)
+    prior.θ^k * stirling(n, k) / rising_factorial(prior.θ, n)
 end
 
 # Notice it doesn't depend on j
@@ -17,7 +17,7 @@ function posterior_probability(prior::DirichletProcess, m::Integer, k::Integer, 
     for l = k:m
         s += binomial(m, l) * stirling(l, k) * rising_factorial(n, m - l)
     end
-    return s * prior.θ^k * rising_factorial(prior.θ, n) / rising_factorial(prior.θ, n + m)
+    s * prior.θ^k * rising_factorial(prior.θ, n) / rising_factorial(prior.θ, n + m)
 end
 
 struct PoissonDirichletProcess
@@ -30,8 +30,8 @@ function prior_probability(prior::PoissonDirichletProcess, n::Integer, k::Intege
     for i = 1:(k-1)
         p *= (prior.θ + i * prior.σ)
     end
-    return p * generalized_factorial(n, k, prior.σ) / (prior.σ^k) /
-           rising_factorial(prior.θ + 1, n - 1)
+    p * generalized_factorial(n, k, prior.σ) / (prior.σ^k) /
+    rising_factorial(prior.θ + 1, n - 1)
 end
 
 function posterior_probability(
@@ -45,9 +45,9 @@ function posterior_probability(
     for i = j:(j+k-1)
         s *= (prior.θ + i * prior.σ)
     end
-    return s / prior.σ^k *
-           noncentral_generalized_factorial(m, k, prior.σ, -n + j * prior.σ) *
-           rising_factorial(prior.θ + 1, n - 1) / rising_factorial(prior.θ + 1, n + m - 1)
+    s / prior.σ^k *
+    noncentral_generalized_factorial(m, k, prior.σ, -n + j * prior.σ) *
+    rising_factorial(prior.θ + 1, n - 1) / rising_factorial(prior.θ + 1, n + m - 1)
 end
 
 # /sigma = 1/2
@@ -59,9 +59,8 @@ end
 function prior_probability(prior::NormalizedIGProcess, n::Integer, k::Integer)
     s = 0
     for i = 0:(n-1)
-        s +=
-            binomial(n - 1, i) * (-prior.θ^2)^(-i) * gamma(k + 2 + 2i - 2n, prior.θ)
+        s += binomial(n - 1, i) * (-prior.θ^2)^(-i) * gamma(k + 2 + 2i - 2n, prior.θ)
     end
-    return s * binomial(2n - k - 1, n - 1) * exp(prior.θ) * (-prior.θ^2)^(n - 1) /
-           (2^(2n - k - 1) * gamma(k))
+    s * binomial(2n - k - 1, n - 1) * exp(prior.θ) * (-prior.θ^2)^(n - 1) /
+    (2^(2n - k - 1) * gamma(k))
 end

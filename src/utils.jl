@@ -8,8 +8,7 @@ function rising_factorial(a::Real, n::Integer)
     for j = 1:(n-1)
         p *= (a + j)
     end
-
-    return p
+    p
 end
 
 # Central generalized factorial coefficient
@@ -22,8 +21,7 @@ function generalized_factorial(n::Integer, k::Integer, σ::AbstractFloat)
     for j = 0:k
         s += (-1)^j * rising_factorial(-j * σ, n) / (factorial(j) * factorial(k - j))
     end
-
-    return s
+    s
 end
 
 # Non-central generalized factorial coefficient
@@ -37,11 +35,10 @@ function noncentral_generalized_factorial(
     for j = k:n
         s += binomial(n, j) * generalized_factorial(j, k, σ) * rising_factorial(-γ, n - j)
     end
-
-    return s
+    s
 end
 
-# Integer stirling number of the first kind
+# Unsigned stirling number of the first kind
 # https://en.wikipedia.org/wiki/Stirling_numbers_of_the_first_kind
 # n>=0, k>=0
 @memoize LRU{Tuple{Any,Any},Any}(maxsize = 128) function stirling(n::Integer, k::Integer)
@@ -61,5 +58,5 @@ end
         return binomial(n, 2) * binomial(n, 4)
     end
 
-    return (n - 1) * stirling(n - 1, k) + stirling(n - 1, k - 1)
+    (n - 1) * stirling(n - 1, k) + stirling(n - 1, k - 1)
 end
