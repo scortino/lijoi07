@@ -4,12 +4,20 @@ using SpecialFunctions
 
 # Rising factorial
 function rising_factorial(a::Real, n::Integer)
+    if n < 0
+        throw(DomainError(n, "n must be a positive integer"))
+    end
+
     prod(a + j for j = 0:(n-1); init = 1)
 end
 
 # Central generalized factorial coefficient
 function generalized_factorial(n::Integer, k::Integer, σ::AbstractFloat)
-    if n == k == 0
+    if n < 0
+        throw(DomainError(n, "n must be a non-negative integer"))
+    elseif k < 0
+        throw(DomainError(k, "k must be a non-negative integer"))
+    elseif n == k == 0
         return 1
     end
 
@@ -26,6 +34,12 @@ function noncentral_generalized_factorial(
     σ::AbstractFloat,
     γ::AbstractFloat,
 )
+    if n < 0
+        throw(DomainError(n, "n must be a non-negative integer"))
+    elseif k < 0
+        throw(DomainError(k, "k must be a non-negative integer"))
+    end
+
     sum(
         binomial(n, j) * generalized_factorial(j, k, σ) * rising_factorial(-γ, n - j) for
         j = k:n;
@@ -37,7 +51,11 @@ end
 # https://en.wikipedia.org/wiki/Stirling_numbers_of_the_first_kind
 # n>=0, k>=0
 @memoize LRU{Tuple{Any,Any},Any}(maxsize = 128) function stirling(n::Integer, k::Integer)
-    if n == k == 0
+    if n < 0
+        throw(DomainError(n, "n must be a non-negative integer"))
+    elseif k < 0
+        throw(DomainError(k, "k must be a non-negative integer"))
+    elseif n == k == 0
         return 1
     elseif (n == 0) || (k == 0)
         return 0
