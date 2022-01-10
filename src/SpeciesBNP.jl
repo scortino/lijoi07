@@ -1,5 +1,9 @@
 module SpeciesBNP
 
+module Utils
+include("utils.jl")
+end
+
 export 
     DirichletProcess,
     PoissonDirichletProcess,
