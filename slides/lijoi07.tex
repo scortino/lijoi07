@@ -20,20 +20,20 @@
 
 \DeclareMathOperator*{\argmin}{argmin}
 
-\newdate{date}{18}{01}{2021}
+\newdate{date}{31}{01}{2022}
 
 \title[Lijoi et al. (2007)]{Bayesian nonparametric estimation of the probability of discovering new species}
 \subtitle{Lijoi, Mena \& Pr{\"u}nster (2007)}
 \author{Stefano Cortinovis}
 \date[20605 - Machine Learning II]{\displaydate{date}}
 
-% \AtBeginSection[]
-% {
-%     \begin{frame}
-%         \frametitle{Table of Contents}
-%         \tableofcontents[currentsection]
-%     \end{frame}
-% }
+\AtBeginSection[]
+{
+    \begin{frame}
+        \frametitle{Table of Contents}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
 
 \begin{document}
 
@@ -43,6 +43,57 @@
 \titlepage
 \end{frame}
 
+\section{Species sampling}
+
+\begin{frame}[t]{Species sampling framework}
+We formalize the process of drawing samples from a large population of individuals that can be grouped in different species as follows:
+\begin{itemize}
+    \item Let \((X_n)_{n \geq 1}\) be a sequence of random variables taking values in some set \(\mathbb{X}\).
+    \begin{itemize}
+        \item \(X_n\) represents the species of the \(n\)-th individual sampled
+        \item \(\mathbb{X}\) represents an arbitrary set of tags used to label species
+    \end{itemize}z
+    \item Define
+    \begin{equation*}
+        M_j \coloneqq 
+        \begin{cases}
+            1 & \text{if } j = 1\\
+            \inf\{n \colon n > M_{j-1}, X_n \notin \{X_1,...,X_{n-1}\}\} & \text{if } j \geq 2
+        \end{cases}
+        % Mention inf{\emptyset} = inf and M_j < \infty
+    \end{equation*}
+    and, for \(M_j < \infty\), let \(\tilde{X}_j \coloneqq X_{M_j}\).
+    \begin{itemize}
+        \item \(\tilde{X}_j\) represents the \(j\)-th \textbf{distinct species} to be observed
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]{Species Sampling}
+    Formalize the process of drawing samples from a large population of individuals of various species as follows:
+    \begin{itemize}
+        \item<1-> Let \(K_n \coloneqq \max\{j \colon k \leq n \text{ and } M_j < \infty\}\).
+        \begin{itemize}
+            \item \(K_n\) represents the \textbf{number of distinct species} to appear in the first \(n\) observations
+        \end{itemize}
+        \item<2-> Define
+        \begin{equation*}
+            N_{jn} \coloneqq \sum_{i=1}^n \mathbbm{1}(X_i = \tilde{X}_j)
+        \end{equation*}
+        for \(j = 1,...,K_n\) and let \(\mathbf{N}_{n} = (N_{1n},...,N_{K_n n})\).
+        \begin{itemize}
+            \item \(N_{jn}\) represents the \textbf{number of times} that the \(j\)-th species \(\tilde{X}_j\) appears in the first \(n\) observations
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\section{Gibbs-type priors}
+
+\section{Estimating the probability of discovering a new species}
+
+\section{Numerical example}
+
+\section*{}
 \begin{frame}[allowframebreaks] %allow to expand references to multiple frames (slides)
 \frametitle{References}
 \scriptsize{\bibliographystyle{acm}}
