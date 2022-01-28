@@ -11,6 +11,15 @@
 \usepackage{mathtools}
 \usepackage{tikz}
 
+\usetheme{CambridgeUS}
+\usecolortheme{default}
+
+\newcommand\Fontvi{\fontsize{10}{12}\selectfont}
+\newcommand\Fontvii{\fontsize{9}{10}\selectfont}
+
+\setbeamertemplate{theorems}[numbered]
+\DeclareMathOperator*{\argmin}{argmin}
+
 \newcommand{\circled}[1]{%
   \scalebox{0.6}{\tikz\node%
     [outer sep=0pt, inner sep=2pt,
@@ -19,16 +28,6 @@
 }
 \newcommand{\bref}[1]{\circled{\ref{#1}}}
 
-\usetheme{CambridgeUS}
-\usecolortheme{default}
-
-\setbeamertemplate{theorems}[numbered]
-
-\newcommand\Fontvi{\fontsize{10}{12}\selectfont}
-\newcommand\Fontvii{\fontsize{9}{10}\selectfont}
-
-\DeclareMathOperator*{\argmin}{argmin}
-
 \newdate{date}{31}{01}{2022}
 
 \title[Lijoi et al. (2007)]{Bayesian nonparametric estimation of the probability of discovering new species}
@@ -36,13 +35,13 @@
 \author{Stefano Cortinovis}
 \date[20605 - Machine Learning II]{\displaydate{date}}
 
-\AtBeginSection[]
-{
-    \begin{frame}
-        \frametitle{Table of Contents}
-        \tableofcontents[currentsection]
-    \end{frame}
-}
+% \AtBeginSection[]
+% {
+%     \begin{frame}
+%         \frametitle{Table of Contents}
+%         \tableofcontents[currentsection]
+%     \end{frame}
+% }
 
 \begin{document}
 
@@ -87,11 +86,11 @@ We formalize the process of drawing samples from a large population of individua
         \end{itemize}
         \item<2-> Define
         \begin{equation*}
-            N_{jn} \coloneqq \sum_{i=1}^n \mathbbm{1}(X_i = \tilde{X}_j)
+            N_{j,n} \coloneqq \sum_{i=1}^n \mathbbm{1}(X_i = \tilde{X}_j)
         \end{equation*}
-        for \(j = 1,...,K_n\) and let \(\mathbf{N}_{n} = (N_{1n},...,N_{K_n n})\).
+        for \(j = 1,...,K_n\) and let \(\mathbf{N}_{n} = (N_{1,n},...,N_{K_n,n})\).
         \begin{itemize}
-            \item \(N_{jn}\) represents the \textbf{number of times} that the \(j\)-th species \(\tilde{X}_j\) appears in the first \(n\) observations
+            \item \(N_{j,n}\) represents the \textbf{number of times} that the \(j\)-th species \(\tilde{X}_j\) appears in the first \(n\) observations
         \end{itemize}
     \end{itemize}
 \end{frame}
@@ -135,7 +134,8 @@ We formalize the process of drawing samples from a large population of individua
 \end{frame}
 
 \begin{frame}{SSM Characterization}
-    As a result of the discrete nature of \(\tilde{P}\), an SSM induces an infinite exchangeable random partition.
+    % \nu is diffuse, so only discrete nature of \tilde{P} matters for ties
+    As a result of the discrete nature of \(\tilde{P}\), an SSM induces an infinite exchangeable random partition (Kingman, 1978).
     \medskip
     
     The strong link between a species sampling model and the partition it induces was unveiled by Pitman, who showed that the former is characterized by \(\nu\) and by the exchangeable partition probability function (EPPF) associated with the latter. 
@@ -148,17 +148,46 @@ We formalize the process of drawing samples from a large population of individua
     for \(n \geq 1\).
 \end{frame}
 
-\section{Gibbs-type priors}
+\begin{frame}{Gibbs-type priors (Gnedin \& Pitman, 2006)}
+    An important class of SSMs, particularly attractive for the simplicity of their EPPF, is represented by Gibbs-type priors.
+    \begin{definition}[Gibbs-type prior]
+        A Gibbs-type prior of order \(\sigma \in (-\infty, 1)\) is a SSM that induces an infinite exchangeable random partition with EPPF of the form
+        \begin{equation*}
+            \text{pr}[\{K_n = k\} \cap \{N_{jn} = n_j,\ j = 1,...,k\}] = V_{n,k} \prod_{j=1}^k (1 - \sigma)_{n_j - 1}
+        \end{equation*}
+        for some set of non-negative weights \(\{V_{n, k} \colon n \geq 1, 1 \leq k \leq n\}\) satisfying the recurrence relation
+        \begin{equation*}
+            V_{n, k} = (n - \sigma) V_{n +1, k} + V_{n + 1, k + 1}.
+        \end{equation*}
+        % Notice that probability above is invariant with respect to permutations of (n_1,...,n_k). Moreover, the recurrence relation that the weights satisfy arises naturally as it ensures that the set of joint distributions defined in this way is a consistent EPPF -> p(n_1,...,n_k) = \sum_{j = 1}^k p(n_1,...,n_j+1,...,n_k) + p(n_1,...,n_k,1)
+        % Partitions identified by this EPPF are called Gibbs-type random partitions
+    \end{definition}
+\end{frame}
+
+\begin{frame}{Predictive distributions}
+    A Gibbs-type prior is also characterized by its predictive distributions, which take the form
+    \begin{enumerate}
+        \item \(P(X_1 \in \cdot) = \nu(\cdot)\)
+        \item \(P(X_{n + 1} \in \cdot | X^{(n)}) = \frac{V_{n+1,k+1}}{V_{n,k}} \nu(\cdot) + \frac{V_{n+1,k}}{V_{n, k}} \sum_{j = 1}^k (n_j - \sigma) \delta_{\tilde{X}_j}(A)\)
+    \end{enumerate}
+    where \(X_1,...,X_n\) is a sample of size \(n\) containing \(K_n = k\) distinct species with frequencies \(n_1,...,n_k\).
+    \medskip
+
+    The expression above sheds some light on the inferential implications connected with a Gibbs-type prior. Indeed, given that \(X^{(n)}\) has been observed, the probability of observing a new species only depends on \(n\) and \(k\). 
+    \medskip
+    
+    Moreover, given that a new species is observed, it is assigned a label according to \(\nu\). On the other hand, given that an old species is observed, the probability that its label corresponds to \(\tilde{X}_j\) depends on \(n_j\) and \(\sigma\).
+    % dependence on \sigma varies as the species observed K_n changes
+\end{frame}
 
 \section{Estimating the probability of discovering a new species}
 
 \section{Numerical example}
 
 \section*{}
-\begin{frame}[allowframebreaks] %allow to expand references to multiple frames (slides)
-\frametitle{References}
-\scriptsize{\bibliographystyle{acm}}
-\bibliography{lijoi07}
+\begin{frame}[allowframebreaks]{References} %allow to expand references to multiple frames (slides)
+    \scriptsize{\bibliographystyle{acm}}
+    \bibliography{lijoi07}
 \end{frame}
  
 \end{document}
