@@ -8,6 +8,7 @@
 \usepackage{bm}
 \usepackage{hyperref}
 \usepackage{environ}
+\usepackage{mathrsfs}
 \usepackage{mathtools}
 \usepackage{tikz}
 
@@ -18,7 +19,7 @@
 \newcommand\Fontvii{\fontsize{9}{10}\selectfont}
 
 \setbeamertemplate{theorems}[numbered]
-\DeclareMathOperator*{\argmin}{argmin}
+\newtheorem{proposition}{Proposition}
 
 \newcommand{\circled}[1]{%
   \scalebox{0.6}{\tikz\node%
@@ -135,7 +136,7 @@ We formalize the process of drawing samples from a large population of individua
 
 \begin{frame}{SSM Characterization}
     % \nu is diffuse, so only discrete nature of \tilde{P} matters for ties
-    As a result of the discrete nature of \(\tilde{P}\), an SSM induces an infinite exchangeable random partition (Kingman, 1978).
+    As a result of the discrete nature of \(\tilde{P}\), an SSP induces an infinite exchangeable random partition (Pitman, 1995).
     \medskip
     
     The strong link between a species sampling model and the partition it induces was unveiled by Pitman, who showed that the former is characterized by \(\nu\) and by the exchangeable partition probability function (EPPF) associated with the latter. 
@@ -143,33 +144,36 @@ We formalize the process of drawing samples from a large population of individua
     
     In other words, for a given \(\nu\), an SSM is characterized by the joint distributions of \(K_n\) and \(\mathbf{N}_n\), i.e.
     \begin{equation*}
-        \text{pr}[\{K_n = k\} \cap \{N_{jn} = n_j,\ j = 1,...,k\}],
+        \text{pr}[\{K_n = k\} \cap \{N_{j,n} = n_j,\ j = 1,...,k\}],
     \end{equation*}
     for \(n \geq 1\).
 \end{frame}
 
 \begin{frame}{Gibbs-type priors (Gnedin \& Pitman, 2006)}
-    An important class of SSMs, particularly attractive for the simplicity of their EPPF, is represented by Gibbs-type priors.
+    % we assume that species proportions in populations are random and give rise to a a probability measure associated with gibbs-type prior
+    An important class of SSPs, particularly attractive for the simplicity of their EPPF, is represented by Gibbs-type priors.
     \begin{definition}[Gibbs-type prior]
-        A Gibbs-type prior of order \(\sigma \in (-\infty, 1)\) is a SSM that induces an infinite exchangeable random partition with EPPF of the form
+        A Gibbs-type prior of order \(\sigma \in (-\infty, 1)\) is a SSP that induces an infinite exchangeable random partition with EPPF of the form
         \begin{equation*}
             \text{pr}[\{K_n = k\} \cap \{N_{jn} = n_j,\ j = 1,...,k\}] = V_{n,k} \prod_{j=1}^k (1 - \sigma)_{n_j - 1}
         \end{equation*}
         for some set of non-negative weights \(\{V_{n, k} \colon n \geq 1, 1 \leq k \leq n\}\) satisfying the recurrence relation
-        \begin{equation*}
+        \begin{equation}
+            \label{eq:recurrence}
             V_{n, k} = (n - \sigma) V_{n +1, k} + V_{n + 1, k + 1}.
-        \end{equation*}
+        \end{equation}
         % Notice that probability above is invariant with respect to permutations of (n_1,...,n_k). Moreover, the recurrence relation that the weights satisfy arises naturally as it ensures that the set of joint distributions defined in this way is a consistent EPPF -> p(n_1,...,n_k) = \sum_{j = 1}^k p(n_1,...,n_j+1,...,n_k) + p(n_1,...,n_k,1)
         % Partitions identified by this EPPF are called Gibbs-type random partitions
     \end{definition}
 \end{frame}
 
-\begin{frame}{Predictive distributions}
+\begin{frame}{Predictive distribution}
     A Gibbs-type prior is also characterized by its predictive distributions, which take the form
     \begin{enumerate}
         \item \(P(X_1 \in \cdot) = \nu(\cdot)\)
         \item \(P(X_{n + 1} \in \cdot | X^{(n)}) = \frac{V_{n+1,k+1}}{V_{n,k}} \nu(\cdot) + \frac{V_{n+1,k}}{V_{n, k}} \sum_{j = 1}^k (n_j - \sigma) \delta_{\tilde{X}_j}(A)\)
     \end{enumerate}
+    % can express it as prob(new|X) * a + (1 - prob(new|X)) * b
     where \(X_1,...,X_n\) is a sample of size \(n\) containing \(K_n = k\) distinct species with frequencies \(n_1,...,n_k\).
     \medskip
 
@@ -182,7 +186,60 @@ We formalize the process of drawing samples from a large population of individua
 
 \section{Estimating the probability of discovering a new species}
 
+\begin{frame}{Prior distribution}
+    % prior probability distribution of the number of species to be observed in a sample of size n
+    \begin{proposition}[Gnedin \& Pitman, 2006]
+         Let \((X_n)_{n \geq 1}\) be a sequence of exchangeable observations governed by a Gibbs-type prior of order \(\sigma\) and with a set of non-negative weights \(\{V_{n, k} \colon n \geq 1, 1 \leq k \leq n\}\) satisfying \eqref{eq:recurrence}. Then, for any \(k \in \{1,...,n\}\),
+        \begin{equation*}
+            \text{pr}(K_n = k) = \frac{V_{n,k}}{\sigma^k} \mathscr{C}(n, k; \sigma),
+        \end{equation*}
+        where \(\mathscr{C}(n, k; \sigma)\) is a generalized factorial coefficient. % easily computable
+    \end{proposition}
+\end{frame}
+
+\begin{frame}{Posterior distribution}
+    % posterior probability distribution of the number of species to be observed in a sample of size m
+    \begin{proposition}[Lijoi, Mena \& Pr{\"u}nster, 2007]
+        Let \((X_n)_{n \geq 1}\) be a sequence of exchangeable observations governed by a Gibbs-type prior of order \(\sigma\) and with a set of non-negative weights \(\{V_{n, k} \colon n \geq 1, 1 \leq k \leq n\}\) satisfying \eqref{eq:recurrence}. Then, for any \(k \in \{0,...,m\}\) and for any \(j \in \{1,...,n\}\),
+        \begin{equation*}
+            \text{pr}(K_m^{(n)} = k | X_j^{(1,n)}) = \frac{V_{n+m,j+k}}{V_{n,j}}\frac{1}{\sigma^k} \mathscr{C}(m, k; \sigma, -n + j \sigma),
+        \end{equation*}
+        where \(\mathscr{C}(m, k; \sigma, -n + j \sigma)\) is a non-central generalized factorial coefficient.
+    \end{proposition}
+    \medskip
+    Notice that, in order to compute the probability above, the only information that we need about the sample \(X_j^{(1,n)}\) other than its size is the number \(K_n\) of distinct species observed. We refer to this structural feature of Gibbs-type priors as \textbf{sufficiency} of \(K_n\).
+    % prediction of the number of new species depends only on the number of distinct species observed
+\end{frame}
+
+\begin{frame}{Discovery probability at the \((n+m+1)\)-th draw}
+    Thanks to the sufficiency of \(K_n\), we have that
+    \begin{equation*}
+        D_m^{(n:j)} = \text{pr}(K_1^{(m + n)} = 1 | X_j^{(1,n)}, X^{(2, m)}) = \text{pr}(K_1^{(m + n)} = 1 | K_n, K^n_{(m)}).
+    \end{equation*}
+    % to see this, suppose for a moment to have observed both first and second sample, then by sufficiency highlighted before, dependency is only on K_n = j, K^{(n)}_m = k, by randomness of the latter the statement above follows
+    \begin{proposition}[Lijoi, Mena \& Pr{\"u}nster, 2007]
+        Let \((X_n)_{n \geq 1}\) be a sequence of exchangeable observations governed by a Gibbs-type prior of order \(\sigma\) and with a set of non-negative weights \(\{V_{n, k} \colon n \geq 1, 1 \leq k \leq n\}\) satisfying \eqref{eq:recurrence}. Then, the Bayes estimate under a squared loss function of \(D_m^{n:j}\) is 
+        \begin{equation*}
+            \hat{D}_m^{(n:j)} = \sum_{k = 0}^m \frac{V_{n+m+1,j+k+1}}{V_{n,j}}\frac{1}{\sigma^k}\mathscr{C}(m, k; \sigma, -n + j\sigma),
+        \end{equation*}
+        where \(\mathscr{C}(m, k; \sigma, -n + j \sigma)\) is a non-central generalized factorial coefficient.
+    \end{proposition}
+    % using proposition 2 we can compute the posterior distribution and then the estimator is the expected value of D_m^{(n:j)} wrt the posterior distribution (see proof in appendix)
+\end{frame}
+
 \section{Numerical example}
+
+\begin{frame}{Dirichlet process (Ferguson, 1973)}
+    
+\end{frame}
+
+\begin{frame}{Two-parameter Poisson-Dirichlet process (Pitman, 1995)}
+    
+\end{frame}
+
+\begin{frame}{Normalized inverse Gaussian process (Lijoi et al., 2005)}
+    
+\end{frame}
 
 \section*{}
 \begin{frame}[allowframebreaks]{References} %allow to expand references to multiple frames (slides)
