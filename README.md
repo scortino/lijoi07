@@ -2,11 +2,7 @@
 
 [![CI][CI-img]][CI-url] [![CODECOV][codecov-img]][codecov-url]
 
-This repository contains slides covering the paper [*Bayesian nonparametric estimation of the probability of discovering new species* by Lijoi, Mena, and Prünster (2007)](https://www.jstor.org/stable/20441417?seq=1#metadata_info_tab_contents), together with a Julia implementation of the simulations described therein.
-
-## Slides
-
-The LaTeX files for the slides can be found in `slides/`. The latest version of the project is automatically compiled into a PDF on push and deployed to the [pdf branch](https://github.com/scortino/lijoi07/tree/pdf).
+This repository contains a Julia implementation of the simulations described in [*Bayesian nonparametric estimation of the probability of discovering new species* by Lijoi, Mena, and Prünster (2007)](https://www.jstor.org/stable/20441417?seq=1#metadata_info_tab_contents). A deck of slides used to present this project can be found [here](https://github.com/scortino/lijoi07-slides).
 
 ## Simulations
 
