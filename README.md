@@ -23,8 +23,8 @@ This generates some summary graphs for the simulations that are saved in `img/`,
 
 This project was proposed by Professors C. Feinauer, I. Prünster, and G. Zanella as part of their course [20605 - Machine Learning 2](https://didattica.unibocconi.eu/ts/tsn_anteprima.php?cod_ins=20605&anno=2022&IdPag=).
 
-[CI-img]: https://github.com/scortino/lijoi07/actions/workflows/ci.yml/badge.svg
-[CI-url]: https://github.com/scortino/lijoi07/actions/workflows/ci.yml
+[CI-img]: https://github.com/stefanocortinovis/species-bnp/actions/workflows/ci.yml/badge.svg
+[CI-url]: https://github.com/stefanocortinovis/species-bnp/actions/workflows/ci.yml
 
-[codecov-img]: https://codecov.io/gh/scortino/lijoi07/branch/main/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/scortino/lijoi07
+[codecov-img]: https://codecov.io/gh/stefanocortinovis/species-bnp/branch/main/graph/badge.svg
+[codecov-url]: https://codecov.io/gh/stefanocortinovis/species-bnp
